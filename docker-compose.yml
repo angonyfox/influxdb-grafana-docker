@@ -1,6 +1,18 @@
 version: "3"
 
 services:
+    influxdb:
+        image: influxdb:1.7
+        container_name: influxdb
+        ports:
+          - 8086:8086
+        volumes:
+          - influxdb_storage:/var/lib/influxdb
+          - ${PWD}/config/influxdb/influxdb.conf:/etc/influxdb/influxdb.conf
+        environment:
+          - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
+          - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
+
     grafana:
         image: grafana/grafana:withplugin
         container_name: grafana
@@ -12,12 +24,23 @@ services:
                 GF_INSTALL_PLUGINS: 'natel-plotly-panel,grafana-piechart-panel,yesoreyeram-boomtable-panel,https://github.com/ilgizar/ilgizar-candlestick-panel/archive/master.zip;ilgizar-candlestick-panel'
         ports:
             - 3000:3000
+        links:
+          - influxdb:influxdb
+        depends_on:
+          - influxdb
         volumes:
           - grafana_storage:/var/lib/grafana
         environment:
           - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
           - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+
 volumes:
+    influxdb_storage:
+        driver: local
+        driver_opts:
+            type: none
+            device: ${PWD}/storage/influxdb/data
+            o: bind
     grafana_storage:
         driver: local
         driver_opts:
