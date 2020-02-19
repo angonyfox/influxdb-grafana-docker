@@ -12,3 +12,15 @@ services:
                 GF_INSTALL_PLUGINS: 'natel-plotly-panel,grafana-piechart-panel,yesoreyeram-boomtable-panel,https://github.com/ilgizar/ilgizar-candlestick-panel/archive/master.zip;ilgizar-candlestick-panel'
         ports:
             - 3000:3000
+        volumes:
+          - grafana_storage:/var/lib/grafana
+        environment:
+          - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+          - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+volumes:
+    grafana_storage:
+        driver: local
+        driver_opts:
+            type: none
+            device: ${PWD}/storage/grafana
+            o: bind
