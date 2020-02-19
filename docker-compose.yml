@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+    grafana:
+        image: grafana/grafana:withplugin
+        container_name: grafana
+        build:
+            context: ./docker/grafana
+            args:
+                GRAFANA_VERSION: 6.5.3
+                GF_INSTALL_IMAGE_RENDERER_PLUGIN: 'false'
+                GF_INSTALL_PLUGINS: 'natel-plotly-panel,grafana-piechart-panel,yesoreyeram-boomtable-panel,https://github.com/ilgizar/ilgizar-candlestick-panel/archive/master.zip;ilgizar-candlestick-panel'
+        ports:
+            - 3000:3000
